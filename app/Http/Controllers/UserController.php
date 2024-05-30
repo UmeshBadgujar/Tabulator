@@ -38,7 +38,9 @@ class UserController extends Controller
             }
         }
 
-        $users = $query->paginate(10);
+         // Pagination with custom per_page value
+         $perPage = $request->input('per_page', 200);
+         $users = $query->paginate($perPage);
 
         return response()->json($users);
     }
