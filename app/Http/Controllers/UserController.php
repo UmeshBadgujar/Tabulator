@@ -25,16 +25,32 @@ class UserController extends Controller
         if ($request->has('location')) {
             $query->where('location', 'like', '%' . $request->input('location') . '%');
         }
+        if ($request->has('gender')) {
+            $query->where('gender', 'like', $request->input('gender'));
+        }
+        if ($request->has('favourite')) {
+            $query->where('favourite', 'like', '%' . $request->input('favourite') . '%');
+        }
         if ($request->has('dob')) {
             $query->where('dob', $request->input('dob'));
         }
 
-        // Sorting
+       // Sorting
+        // if ($request->has('sort_by')) {
+        //     $sortBy = $request->input('sort_by');
+        //     $sortOrder = $request->input('sort_order', 'asc'); // Default to ascending
+        //     if (in_array($sortBy, ['name', 'email', 'phone_number', 'dob', 'location', 'gender','favourite'])) {
+        //         $query->orderBy($sortBy, $sortOrder);
+        //     }
+        // }
+
         if ($request->has('sort_by')) {
-            $sortBy = $request->input('sort_by');
-            $sortOrder = $request->input('sort_order', 'asc'); // Default to ascending
-            if (in_array($sortBy, ['name', 'email', 'phone_number', 'dob', 'location', 'gender','favourite'])) {
-                $query->orderBy($sortBy, $sortOrder);
+            $sorts = explode(',', $request->input('sort_by'));
+            foreach ($sorts as $sort) {
+                list($field, $direction) = explode(':', $sort);
+                if (in_array($field, ['id','name', 'email', 'phone_number', 'dob', 'location', 'gender', 'favourite']) && in_array($direction, ['asc', 'desc'])) {
+                    $query->orderBy($field, $direction);
+                }
             }
         }
 
